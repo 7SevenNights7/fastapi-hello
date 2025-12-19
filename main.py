@@ -20,23 +20,6 @@ def get_conn():
     return psycopg2.connect(DATABASE_URL)
 
 
-@app.on_event("startup")
-def startup():
-    """
-    При старте сервера создаём таблицу, если её нет.
-    """
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                """
-                CREATE TABLE IF NOT EXISTS notes (
-                    id SERIAL PRIMARY KEY,
-                    text TEXT NOT NULL
-                );
-                """
-            )
-            conn.commit()
-
 
 class NoteIn(BaseModel):
     text: str
