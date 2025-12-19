@@ -2,7 +2,7 @@ version: "3"
 
 services:
   fastapi-hello:
-    build: .
+    image: ghcr.io/7sevennights7/fastapi-hello:latest
     container_name: fastapi-hello
     restart: unless-stopped
     ports:
