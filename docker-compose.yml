@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  fastapi-hello:
+    build: .
+    container_name: fastapi-hello
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://appuser:supersecret@192.168.0.155:5432/appdb
