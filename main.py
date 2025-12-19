@@ -1,4 +1,5 @@
 import os
+import datetime
 from typing import List
 
 from fastapi import FastAPI
@@ -28,6 +29,7 @@ class NoteIn(BaseModel):
 class NoteOut(BaseModel):
     id: int
     text: str
+    created_at: datetime.datetime
 
 
 @app.get("/")
@@ -39,9 +41,9 @@ def read_root():
 def get_notes():
     with get_conn() as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-            cur.execute("SELECT id, text FROM notes ORDER BY id;")
+            cur.execute("SELECT id, text, created_at FROM notes ORDER BY id;")
             rows = cur.fetchall()
-            return [NoteOut(id=row["id"], text=row["text"]) for row in rows]
+            return [NoteOut(id=row["id"], text=row["text"], create_at=row["created_at"],) for row in rows]
 
 
 @app.post("/notes", response_model=NoteOut)
@@ -49,9 +51,9 @@ def create_note(note: NoteIn):
     with get_conn() as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
             cur.execute(
-                "INSERT INTO notes (text) VALUES (%s) RETURNING id, text;",
+                "INSERT INTO notes (text) VALUES (%s) RETURNING id, text, created_at;",
                 (note.text,),
             )
             row = cur.fetchone()
             conn.commit()
-            return NoteOut(id=row["id"], text=row["text"])
+            return NoteOut(id=row["id"], text=row["text"], created_at=row["created_at"],)
