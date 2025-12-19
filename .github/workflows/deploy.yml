@@ -34,6 +34,7 @@ jobs:
       - name: Deploy on home server
         run: |
           cd /srv/apps/fastapi-hello
+          ./venv/bin/alembic upgrade head
           docker compose pull
           docker compose up -d
           docker image prune -f
